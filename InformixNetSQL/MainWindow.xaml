@@ -1,0 +1,80 @@
+﻿<Window x:Class="InformixNetSQL.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InformixNetSQL"
+        mc:Ignorable="d"
+        Title="InformixNetSQL" Height="418.22" Width="1127.119">
+    <Grid Margin="0,0,2,0">
+        <ToolBarPanel Height="41.406" VerticalAlignment="Top" Orientation="Horizontal">
+            <ComboBox x:Name="cb_dbserver" Width="136.734">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button x:Name="bt_connect" Content="Connect" Width="75" Click="bt_connect_Click" Foreground="Red"/>
+            <Button x:Name="bt_disconnect" Content="Disconnect" Width="75" RenderTransformOrigin="-3.851,0.304" Click="bt_disconnect_Click" Foreground="#FF1E5F1E"/>
+            <ComboBox x:Name="cb_dbname" Width="120" SelectionChanged="cb_dbname_SelectionChanged"/>
+            <Button x:Name="bt_execute" Content="Execute" Width="75" Click="bt_execute_Click"/>
+            <Button x:Name="bt_executeSelected" Content="Execute selected" Width="75"/>
+            <Button x:Name="bt_abort" Content="Abort" Width="75" Click="bt_abort_Click" Visibility="Hidden"/>
+            <Button x:Name="bt_beginWork" Content="Begin work" Width="75" Click="bt_beginWork_Click"/>
+            <Button x:Name="bt_commitWork" Content="Commit work" Width="75" Click="bt_commitWork_Click"/>
+            <Button x:Name="bt_rollbackWork" Content="Rollback work" Width="75" Click="bt_rollbackWork_Click"/>
+        </ToolBarPanel>
+        <TabControl x:Name="tc_workspace" Margin="195,46.406,0,0">
+            <TabItem x:Name="tab_editor" Header="Editor">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="736*"/>
+                        <ColumnDefinition Width="35*"/>
+                    </Grid.ColumnDefinitions>
+                    <RichTextBox x:Name="rtb_sqlSource" Grid.ColumnSpan="2">
+                        <FlowDocument>
+                            <Paragraph>
+                                <Run Text=""/>
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="tab_result" Header="Result">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="91*"/>
+                        <ColumnDefinition Width="811*"/>
+                    </Grid.ColumnDefinitions>
+                    <DataGrid x:Name="dg_sqlResult" Grid.ColumnSpan="3"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <ListView x:Name="lv_dbTables" HorizontalAlignment="Left" Margin="0,105,0,0" Width="190">
+            <ListView.View>
+                <GridView AllowsColumnReorder="true"
+              ColumnHeaderToolTip="Employee Information">
+
+                    <GridViewColumn Width="200">
+                        <GridViewColumnHeader>Table name
+                            <GridViewColumnHeader.ContextMenu>
+                                <ContextMenu  MenuItem.Click="TableName_Click"  
+                                        Name="TableName">
+                                    <MenuItem Header="Ascending" />
+                                    <MenuItem Header="Descending" />
+                                </ContextMenu>
+                            </GridViewColumnHeader.ContextMenu>
+                        </GridViewColumnHeader>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="75,60,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBox x:Name="tb_filter" HorizontalAlignment="Left" Height="58.594" Margin="0,41.406,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="195" TextChanged="tb_filter_TextChanged"/>
+
+    </Grid>
+</Window>
