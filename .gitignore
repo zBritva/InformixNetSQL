@@ -1,1 +1,7 @@
 .vs
+InformixNetSQL/obj/Debug/InformixNetSQL.exe
+*.exe
+InformixNetSQL/obj/Debug/InformixNetSQL.g.resources
+*.baml
+InformixNetSQL/obj/Debug/MainWindow.g.cs
+InformixNetSQL/obj/Debug/MainWindow.g.i.cs

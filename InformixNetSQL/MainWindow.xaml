@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:InformixNetSQL"
         mc:Ignorable="d"
         Title="InformixNetSQL" Height="418.22" Width="1127.119">
+    <Window.Resources>
+        <Storyboard x:Key="OnMouseRightButtonUp1"/>
+    </Window.Resources>
     <Grid Margin="0,0,2,0">
         <ToolBarPanel Height="41.406" VerticalAlignment="Top" Orientation="Horizontal">
             <ComboBox x:Name="cb_dbserver" Width="136.734">
@@ -55,25 +58,21 @@
             </TabItem>
         </TabControl>
         <ListView x:Name="lv_dbTables" HorizontalAlignment="Left" Margin="0,105,0,0" Width="190">
+            <ListView.ContextMenu>
+                <ContextMenu  Name="TableName" DataContext="{Binding Path=PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
+                    <MenuItem Header="DDL" Name="TableDDL" Click="OpenDDL" />
+                    <MenuItem Header="Edit" Name="EditTable" Click="OpenTable" />
+                </ContextMenu>
+            </ListView.ContextMenu>
             <ListView.View>
                 <GridView AllowsColumnReorder="true"
-              ColumnHeaderToolTip="Employee Information">
-
-                    <GridViewColumn Width="200">
-                        <GridViewColumnHeader>Table name
-                            <GridViewColumnHeader.ContextMenu>
-                                <ContextMenu  MenuItem.Click="TableName_Click"  
-                                        Name="TableName">
-                                    <MenuItem Header="Ascending" />
-                                    <MenuItem Header="Descending" />
-                                </ContextMenu>
-                            </GridViewColumnHeader.ContextMenu>
-                        </GridViewColumnHeader>
+              ColumnHeaderToolTip="Tables Information">
+                     <GridViewColumn Width="200">
+                        <GridViewColumnHeader>Table name</GridViewColumnHeader>
                     </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="75,60,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <TextBox x:Name="tb_filter" HorizontalAlignment="Left" Height="58.594" Margin="0,41.406,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="195" TextChanged="tb_filter_TextChanged"/>
 
     </Grid>

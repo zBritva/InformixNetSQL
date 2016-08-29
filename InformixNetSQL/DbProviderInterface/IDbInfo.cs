@@ -10,6 +10,8 @@ namespace InformixNetSQL.DbProviderInterface
     {
         List<string> GetDataBases();
         List<string> GetTables();
-        List<string> GetTableDDL(string tablename);
+        List<string> GetProcedures();
+        string GetTableDDL(string tablename);
+        string GetProcedureBody(string procname);
     }
 }

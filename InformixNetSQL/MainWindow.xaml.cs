@@ -144,8 +144,21 @@ namespace InformixNetSQL
 
         private void TableName_Click(object sender, EventArgs e)
         {
-
+            var menu = sender as ContextMenu;
+            MessageBox.Show(menu.Name);
         }
+
+        private void OpenDDL(object sender, EventArgs e)
+        {
+            var menu = sender as MenuItem;
+            MessageBox.Show(menu.Name);
+        }
+
+        private void OpenTable(object sender, EventArgs e)
+        {
+            var menu = sender as MenuItem;
+            MessageBox.Show(menu.Name);
+        }        
 
         private void tb_filter_TextChanged(object sender, TextChangedEventArgs e)
         {
