@@ -150,8 +150,20 @@ namespace InformixNetSQL
 
         private void OpenDDL(object sender, EventArgs e)
         {
-            var menu = sender as MenuItem;
-            MessageBox.Show(menu.Name);
+            try
+            {
+                var table = this.lv_dbTables.SelectedItem as string;
+
+                if (table == null || table == "")
+                    return;
+
+                var tableDDL = (this.manager.connection as IDbInfo).GetTableDDL(table);
+                MessageBox.Show(tableDDL);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void OpenTable(object sender, EventArgs e)

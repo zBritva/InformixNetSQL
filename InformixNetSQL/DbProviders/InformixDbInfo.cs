@@ -51,9 +51,63 @@ namespace InformixNetSQL.DbProviders
 
         }
 
-        private string DecodeIfxType(string coltype, string collength)
+        /// <summary>
+        /// Processing info about column 
+        /// See: https://www.ibm.com/support/knowledgecenter/SSGU8G_11.50.0/com.ibm.sqlr.doc/ids_sqr_030.htm
+        /// </summary>
+        /// <param name="coltype"></param>
+        /// <param name="collength"></param>
+        /// <param name="coldefault"></param>
+        /// <param name="default_type"></param>
+        /// <returns></returns>
+        private string DecodeIfxType(string coltype, string collength, string coldefault, string default_type)
         {
-            throw new NotImplementedException();
+            var ifxtype = "";
+            switch(coltype)
+            {
+                case "DATETIME":
+                    ifxtype = coltype + " " + collength.Replace(":","to");
+                    break;
+                case "VARCHAR":
+                    ifxtype = coltype + "(" + collength + ")";
+                    break;
+                case "CHAR":
+                    ifxtype = coltype + "(" + collength + ")";
+                    break;
+                case "LVARCHAR":
+                    ifxtype = coltype + "(" + collength + ")";
+                    break;
+                case "DECIMAL":
+                    ifxtype = coltype + "(" + collength + ")";
+                    break;
+                case "MONEY":
+                    ifxtype = coltype + "(" + collength + ")";
+                    break;
+                default:
+                    ifxtype = coltype;
+                    break;
+            }
+
+            //process literal value
+            if(default_type == "L")
+            {
+                if (coltype == "SMALLINT")
+                    coldefault = coldefault.Replace("AAE", "").Replace("AAA","").Trim();
+
+                ifxtype += " default " + coldefault.Trim();
+            }
+
+            if (default_type == "N")
+            {
+                ifxtype += " default NULL ";
+            }
+
+            if (default_type == "T")
+            {
+                ifxtype += " default today ";
+            }
+
+            return ifxtype;
         }
 
         public string GetTableDDL(string tablename)
@@ -131,27 +185,32 @@ namespace InformixNetSQL.DbProviders
                 "                 WHEN coltype>255 THEN 'NO'" +
                 "                 ELSE 'YES' " +
                 "         END nnull," +
-                "      colno " +
+                "      c.colno, " +
+                "      nvl(def.default,'') as default, " +
+                "      nvl(def.type,'') as default_type " +
                 " from syscolumns c " +
-                " join systables t on c.tabid = t.tabid" +
+                " join systables t on c.tabid = t.tabid " +
+                " left join sysdefaults def on def.tabid = t.tabid and def.colno = c.colno" +
                 " where tabname= '" + tablename + "'" +
                 " order by colno";
 
             IExecutionResult<DataTable> columns = this.Execution(sqlSelectColumns);
             var ddl =
-                "CREATE TABLE " + tablename + " ( ";
+                "CREATE TABLE " + tablename + " ( " + System.Environment.NewLine;
 
             foreach(DataRow tableColumn in columns.resultData.Rows)
             {
-                var colname = tableColumn["colname"].ToString();
-                var coltype = tableColumn["coltype"].ToString();
-                var collength = tableColumn["collength"].ToString();
-                var allownull = tableColumn["nnul"].ToString();
-                var colno = tableColumn["colno"].ToString();
+                var colname = tableColumn["colname"].ToString().Trim();
+                var coltype = tableColumn["coltype"].ToString().Trim();
+                var collength = tableColumn["collength"].ToString().Trim();
+                var allownull = tableColumn["nnull"].ToString().Trim();
+                var colno = tableColumn["colno"].ToString().Trim();
+                var coldefault = tableColumn["default"].ToString().Trim();
+                var default_type = tableColumn["default_type"].ToString();
 
                 ddl += string.Format("\t{0} {1} {2},{3}",
                     colname,
-                    this.DecodeIfxType(coltype, collength),
+                    this.DecodeIfxType(coltype, collength, coldefault, default_type),
                     allownull == "NO" ? " NOT NULL ": "",
                     System.Environment.NewLine
                     );
@@ -165,7 +224,7 @@ namespace InformixNetSQL.DbProviders
             var NEXT_SIZE = table.resultData.Rows[0]["nextsize"].ToString();
             var LOCK_LEVEL = table.resultData.Rows[0]["locklevel"].ToString();
 
-            ddl += "EXTENT SIZE " + EXTENT_SIZE + " NEXT SIZE " + NEXT_SIZE + "LOCK MODE " + (LOCK_LEVEL == "R" ? "ROW" : "PAGE");
+            ddl += "EXTENT SIZE " + EXTENT_SIZE + " NEXT SIZE " + NEXT_SIZE + " LOCK MODE " + (LOCK_LEVEL == "R" ? "ROW" : "PAGE") + ";";
 
             return ddl;
         }
